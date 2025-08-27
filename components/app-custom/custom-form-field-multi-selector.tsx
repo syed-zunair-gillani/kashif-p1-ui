@@ -7,6 +7,15 @@ import {ICustomFormField} from "@/components/app-custom/CustomFormField";
 
 type Type = Omit<ICustomFormField, 'inputType'>
 
+type Props = {
+  form: any;                 // your existing type
+  type?: "store" | "service" // existing
+  // ⬅️ ADDED:
+  services?: string[];
+  brands?: string[];
+  loadingLists?: boolean;
+};
+
 type ICustomFormFieldMultiSelector = Type & {
 	Children: (onChange: (value: string[]) => void, hasError: boolean, value?: string[]) => JSX.Element;
 };

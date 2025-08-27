@@ -12,8 +12,13 @@ import {Button} from "@/components/ui/button";
 import React from "react";
 import {ServiceSelector} from "@/components/services/selectors/service-selector";
 
+
 export interface IServiceRegistrationStep2 {
-	form: any
+  form: any
+  // ⬅️ ADDED
+  services?: Array<{ serviceId: number | string; serviceName: string }>
+  brands?: string[]
+  loadingLists?: boolean
 }
 
 export function ServiceRegistrationTip() {
@@ -30,8 +35,7 @@ export function ServiceRegistrationTip() {
 	)
 }
 
-export default function ServiceRegistrationStep2({form}: IServiceRegistrationStep2) {
-
+export default function ServiceRegistrationStep2({form, services, brands, loadingLists}: IServiceRegistrationStep2) {
 
 
 
@@ -58,23 +62,65 @@ export default function ServiceRegistrationStep2({form}: IServiceRegistrationSte
 										return (
 												<div className={'grid grid-cols-1 530:grid-cols-2 700:grid-cols-3 gap-6'} key={info.id}>
 													<CustomFormFieldSelector
-															control={form.control}
-															name={`branches.${index}.info.${infoIndex}.service`}
-															label={'Select the services *'}
-															Children={(onChange, hasError, value) => <ServiceSelector value={value} triggerClassname={'h-14'} onChange={onChange} /> }
+													control={form.control}
+													name={`branches.${index}.info.${infoIndex}.service`}
+													label={'Select the services *'}
+													// ⬅️ UPDATED (add conditional; keep your original ServiceSelector fallback)
+													Children={(onChange, hasError, value) =>
+														(services && services.length)
+														? (
+															<select
+															className={`h-14 w-full border rounded p-2 ${hasError ? 'border-red-500' : 'border-gray-300'}`}
+															value={value ?? ""}
+															onChange={(e) => onChange(e.target.value)}
+															disabled={loadingLists}
+															>
+															<option value="" disabled>Select a service</option>
+															{services.map(s => (
+															<option key={String(s.serviceId)} value={String(s.serviceId)}>
+																{s.serviceName}
+															</option>
+															))}
+															</select>
+														)
+														: (
+															<ServiceSelector value={value} triggerClassname={'h-14'} onChange={onChange} />
+														)
+													}
 													/>
-													<CustomFormFieldMultiSelector
-															control={form.control}
-															name={`branches.${index}.info.${infoIndex}.carBrands`}
-															label={'Select the car brands *'}
-															Children={(onChange, hasError, value) => <BrandsMultiSelector value={value} className={'h-14'} onChange={onChange} /> }
+
+												<CustomFormFieldMultiSelector
+												control={form.control}
+												name={`branches.${index}.info.${infoIndex}.carBrands`}
+												label={'Select the car brands *'}
+												Children={(onChange, hasError, value) => (
+													<BrandsMultiSelector
+													value={value}
+													className={`h-14 ${hasError ? 'border-red-500' : ''}`}
+													onChange={onChange}
 													/>
-													<CustomFormFieldSelector
-															control={form.control}
-															name={`branches.${index}.info.${infoIndex}.boxQuantity`}
-															label={'Select Box quantity'}
-															Children={(onChange, hasError, value) => <BoxQuantitySelector value={value} onChange={onChange}/> }
+												)}
+												/>
+
+
+
+
+
+
+
+												<CustomFormFieldSelector
+												control={form.control}
+												name={`branches.${index}.info.${infoIndex}.boxQuantity`}
+												label={'Select Box quantity'}
+												Children={(onChange, hasError, value) => (
+													<BoxQuantitySelector
+													value={(Number.isFinite(Number(value)) && Number(value) >= 1) ? Number(value) : 1}
+													onChange={onChange}
 													/>
+												)}
+												/>
+
+
 												</div>
 										)
 									})}

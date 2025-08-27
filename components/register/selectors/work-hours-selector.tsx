@@ -36,7 +36,8 @@ function WorkHoursPopup({
 	// console.log(value)
 	// console.log(value)
 	const [vState, setVState] = useState(value);
-	console.log(vState)
+	console.log("Work Hours:::");
+	console.log(vState);
 
 	return (
 			<Dialog open={isOpen}>

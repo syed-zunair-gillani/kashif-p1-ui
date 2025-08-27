@@ -10,6 +10,14 @@ type Type = Omit<ICustomFormField, 'inputType'>
 type ICustomFormFieldSelector = Type & {
 	Children: (onChange: (value: any) => void, hasError: boolean, value?: any) => JSX.Element;
 };
+type Props = {
+  form: any;                 // your existing type
+  type?: "store" | "service" // existing
+  // ⬅️ ADDED:
+  services?: string[];
+  brands?: string[];
+  loadingLists?: boolean;
+};
 
 function CustomFormFieldSelector(
 		{

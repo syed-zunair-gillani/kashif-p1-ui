@@ -15,7 +15,6 @@ interface IServiceRegistrationStep1 {
 	type?: "service" | "store"
 }
 
-
 export default function ServiceRegistrationStep1({
 		form,
 		type = "service"
@@ -137,9 +136,10 @@ export default function ServiceRegistrationStep1({
 
 				<div className={divGridClassname}>
 					<CustomFormFieldFile
-							control={form.control}
-							label={'Upload your TIN Photo *'}
-							name={'tinPhoto'}
+					control={form.control}
+					label={'Upload your TIN Photo *'}
+					name={'tinPhoto'}
+			                    // <- ADDED (optional)
 					/>
 				</div>
 
@@ -243,7 +243,7 @@ export default function ServiceRegistrationStep1({
 												name={`branches.${index}.workHours`}
 												isItalicPlaceholder={true}
 												placeholder={"Select your working hours"}
-												label={"Working hours *"}
+												label={"Working hours 222222*"}
 												control={form.control}
 												Children={(onChange, hasError, value) => <WorkHoursSelector form={form} value={value} onChange={onChange}/>}
 										/>
@@ -275,14 +275,16 @@ export default function ServiceRegistrationStep1({
 
 									<div className={divGridClassname}>
 										<CustomFormFieldFile
-												control={form.control}
-												label={'Upload branch logo *'}
-												name={`branches.${index}.logo`}
+										control={form.control}
+										label={'Upload branch logo *'}
+										name={`branches.${index}.logo`}
+										                     // <- ADDED (optional)
 										/>
 										<CustomFormFieldFile
-												control={form.control}
-												label={'Upload branch cover *'}
-												name={`branches.${index}.cover`}
+										control={form.control}
+										label={'Upload branch cover *'}
+										name={`branches.${index}.cover`}
+										                     // <- ADDED (optional)
 										/>
 									</div>
 
