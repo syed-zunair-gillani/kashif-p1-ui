@@ -18,6 +18,7 @@ const API_UPLOAD    = "http://localhost:8081/api/upload";
 const API_COMPANIES = "http://localhost:8081/api/companies";
 const API_BRANCHES  = "http://localhost:8081/api/branches";
 const API_SERVICES = "http://localhost:8081/api/service-entities";
+const API_BRANCH_BRAND_SERVICES = "http://localhost:8081/api/branch-brand-services";
 
 
 interface IServiceRegistration {
@@ -154,6 +155,15 @@ useEffect(() => {
 	const ext  = dot > -1 ? file.name.substring(dot) : '';
 	return `${base}-${ts()}${ext}`;
   }
+
+
+function extractBranchId(payload: any): number {
+  const keys = ["branchId","id","branch_id","BranchId"];
+  for (const k of keys) if (payload && typeof payload[k] === "number") return payload[k];
+  throw new Error("Could not determine branchId from response");
+}
+
+
   async function uploadToSpringUploadAPI(file: File, stampedName: string): Promise<string> {
 	const fd = new FormData();
 	fd.set("file", file);
@@ -243,11 +253,53 @@ useEffect(() => {
 		headers: { "Content-Type": "application/json" },
 		body: JSON.stringify(branchPayload),
 	  });
+
+
+	  // ⬇️ NEW: link this branch to selected service(s) and brand(s)
+const branchJson = await branchRes.json().catch(() => ({}));
+const branchId = extractBranchId(branchJson);
+
+// b.info comes from Step-2 (one row = one service + many brands + qty)
+for (const info of (b as any).info || []) {
+  const serviceId = Number(info.service);                 // value is serviceId (string → number)
+  const qty = Number(info.boxQuantity ?? 1);              // default to 1
+  const brandIds = Array.isArray(info.carBrands)
+    ? info.carBrands.map((x: any) => Number(x)).filter((n: any) => Number.isFinite(n))
+    : [];
+
+  const payloads = brandIds.map((brandId: number) => ({
+    branchId,
+    brandId,
+    serviceId,
+    qty,
+  }));
+
+  await Promise.all(
+    payloads.map((p:any)  =>
+      fetch(API_BRANCH_BRAND_SERVICES, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(p),
+      })
+    )
+  );
+}
+
+
+
+
+
+
+
+
+
+
+	  
+
 	  if (!branchRes.ok) {
 		throw new Error(`Branch create failed: ${branchRes.status} ${await branchRes.text()}`);
 	  }
 	}
-
 	// Success UX
 	openPopup?.();
   }
