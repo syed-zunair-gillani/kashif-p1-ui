@@ -15,7 +15,7 @@ export function CardHeader({ containerClassname, branchName, logoImg }: ICardHea
   return (
     <div className={cn('p-4 pb-0 flex items-center gap-x-4', containerClassname)}>
       {/* Dynamic logo from API */}
-      <img src={`images/${logoImg}`} alt={`${branchName} logo`} className={'!size-14 rounded-full object-cover'} />
+      <img src={`http://localhost:8081/images/${logoImg}`} alt={`${branchName} logo`} className={'!size-14 rounded-full object-cover'} />
       <div className={'flex flex-col gap-y-0.5'}>
         <h5 className={'text-charcoal text-base font-semibold'}>{branchName}</h5>
         <div className={'flex items-center gap-x-1'}>
@@ -92,7 +92,7 @@ export default function ServiceCenterCard({
         )}
       >
         {/* Dynamic branch cover image */}
-        <img className={'rounded-t-3xl max-h-[160px] object-cover w-full'} src={`images/${branchCoverImg}`} alt={`${branchName} cover`} />
+        <img className={'rounded-t-3xl max-h-[160px] object-cover w-full'} src={`http://localhost:8081/images/${branchCoverImg}`} alt={`${branchName} cover`} />
         <div className={'flex flex-col bg-white gap-y-4'}>
           <CardHeader branchName={branchName} logoImg={logoImg} />
           <CardBookedServices services={serviceNames} />

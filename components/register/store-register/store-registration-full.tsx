@@ -9,13 +9,14 @@ import ServiceRegistrationStep1 from "@/components/register/service-register/ser
 import ServiceRegistrationHeader from "@/components/register/service-register/service-registration-header";
 import ServiceRegistrationBottomButtons from "@/components/register/service-register/service-registration-bottom-buttons";
 import ServiceRegistrationStep2 from "@/components/register/service-register/service-registration-step-2";
-import ServiceRegistrationStep3 from "@/components/register/service-register/service-registration-step-3";
+//import ServiceRegistrationStep3 from "@/components/register/service-register/service-registration-step-3";
 import StoreRegistrationStep2 from "@/components/register/store-register/store-registration-step-2";
 
 // ⬅️ ADDED: API endpoints
 const API_UPLOAD    = "http://localhost:8081/api/upload";
 const API_COMPANIES = "http://localhost:8081/api/companies";
 const API_BRANCHES  = "http://localhost:8081/api/branches";
+const API_BRANCH_BRAND_SPAREPARTS = "http://localhost:8081/api/branch-brand-spareparts";
 
 interface IStoreRegistrationFull {
   closeFormAndGoBack: () => void
@@ -24,7 +25,7 @@ interface IStoreRegistrationFull {
 
 function StoreRegistrationFull({closeFormAndGoBack, openPopup}: IStoreRegistrationFull) {
 
-  const [step,setStep] = useState<1 | 2 | 3>(1);
+  const [step,setStep] = useState<1 | 2 >(1);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -38,6 +39,25 @@ function StoreRegistrationFull({closeFormAndGoBack, openPopup}: IStoreRegistrati
     .refine((file) => file.size <= 2 * 1024 * 1024, {
       message: "File size must be less than 2MB",
     });
+
+// ADDED: extract numeric id from various response shapes
+function extractIdLike(payload: any, candidates: string[]): number {
+  for (const k of candidates) {
+    const v = payload?.[k];
+    if (typeof v === "number" && Number.isFinite(v)) return v;
+  }
+  throw new Error("Could not determine id from response");
+}
+
+// ADDED: coerce form values (string/number) to numeric ids
+function toId(value: unknown): number | null {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  if (typeof value === "string") {
+    const n = Number.parseInt(value, 10);
+    if (Number.isFinite(n)) return n;
+  }
+  return null;
+}
 
   const storeBranchInfoSchema = z.object({
     category: z.string({required_error: "Select the category"}),
@@ -195,7 +215,9 @@ function StoreRegistrationFull({closeFormAndGoBack, openPopup}: IStoreRegistrati
         loginEmail: b.email,
         password: b.password,
         logoImg: logoFilename,
-        branchCoverImg: coverFilename
+        branchCoverImg: coverFilename,
+        status: "disapproved"
+
       };
 
       const branchRes = await fetch(API_BRANCHES, {
@@ -205,6 +227,63 @@ function StoreRegistrationFull({closeFormAndGoBack, openPopup}: IStoreRegistrati
       });
       if (!branchRes.ok) {
         throw new Error(`Branch create failed: ${branchRes.status} ${await branchRes.text()}`);
+      }
+      else {
+        // ADDED: read the branch id from the response
+        const branchJson = await branchRes.json().catch(() => ({}));
+        const branchId = extractIdLike(branchJson, ["branchId", "id", "BranchId", "branch_id"]);
+
+        // ADDED: (spare part × brand × state) rows for this branch
+        const infos = Array.isArray(b.info) ? b.info : [];
+        for (const info of infos) {
+          // spare part id (your Step-2 "category"/service selection)
+          const sparepartsId = toId(info?.category);
+          console.log("sparepartsId:::", sparepartsId);
+          if (!sparepartsId) continue;
+
+          // brand ids (multi-select)
+          const brandIds: number[] = Array.isArray(info?.carBrands)
+            ? info.carBrands.map(toId).filter((x: number | null): x is number => x !== null)
+            : [];
+            console.log("Brands:::", brandIds);
+          if (brandIds.length === 0) continue;
+
+          // states (multi-select: allow "new" and/or "used")
+          const states: string[] = Array.isArray(info?.state) && info.state.length
+            ? info.state.map((s: any) => String(s).toLowerCase())
+            : ["new"]; // default if user didn’t pick any
+
+          for (const brandId of brandIds) {
+            for (const state of states) {
+              const payload = {
+                // If your backend auto-generates id, omit `id`. Otherwise set 0 or null.
+                // id: 0,
+                branchId,
+                brandId,
+                sparepartsId,
+                state,
+                
+              };
+              console.log("payload", payload);
+              
+              const relRes = await fetch(API_BRANCH_BRAND_SPAREPARTS, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
+              });
+
+              if (!relRes.ok) {
+                console.error(
+                  `branch-brand-services failed (branch ${branchId}, brand ${brandId}, spareparts ${sparepartsId}, state ${state}):`,
+                  relRes.status,
+                  await relRes.text()
+                );
+              }
+                
+            }
+          }
+        }
+
       }
     }
 
@@ -223,12 +302,12 @@ function StoreRegistrationFull({closeFormAndGoBack, openPopup}: IStoreRegistrati
         <form className={'flex flex-col gap-y-5'} onSubmit={form.handleSubmit(onSubmit)}>
           {step === 1 && <ServiceRegistrationStep1 type={"store"} form={form} />}
           {step === 2 && <StoreRegistrationStep2 form={form} />}
-          {step === 3 && <ServiceRegistrationStep3 form={form} />}
+         
           {/* ⬅️ ADDED: hidden submit so Enter works */}
           
           <div className="pt-6">
 
-		        <button type="submit">Register Company & Branches</button>
+		        <button className="reg-company hidden" type="submit">Register Company & Branches</button>
 
 		      </div>
         </form>

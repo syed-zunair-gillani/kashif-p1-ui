@@ -243,7 +243,7 @@ export default function ServiceRegistrationStep1({
 												name={`branches.${index}.workHours`}
 												isItalicPlaceholder={true}
 												placeholder={"Select your working hours"}
-												label={"Working hours 222222*"}
+												label={"Working hours*"}
 												control={form.control}
 												Children={(onChange, hasError, value) => <WorkHoursSelector form={form} value={value} onChange={onChange}/>}
 										/>

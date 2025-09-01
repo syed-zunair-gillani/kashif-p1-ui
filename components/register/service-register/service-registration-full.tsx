@@ -28,7 +28,7 @@ interface IServiceRegistration {
 
 function ServiceRegistrationFull({closeFormAndGoBack, openPopup}: IServiceRegistration) {
 
-	const [step,setStep] = useState<1 | 2 | 3>(1);
+	const [step,setStep] = useState<1 | 2 >(1);
 
 	// ⬅️ ADDED (inside ServiceRegistrationFull component)
 const [services, setServices] = useState<Array<{ serviceId: number | string; serviceName: string }>>([]);
@@ -245,7 +245,8 @@ function extractBranchId(payload: any): number {
 		loginEmail: b.email,
 		password: b.password,
 		logoImg: logoFilename,
-		branchCoverImg: coverFilename
+		branchCoverImg: coverFilename,
+		status: "disapproved"
 	  };
 
 	  const branchRes = await fetch(API_BRANCHES, {
@@ -285,17 +286,6 @@ for (const info of (b as any).info || []) {
   );
 }
 
-
-
-
-
-
-
-
-
-
-	  
-
 	  if (!branchRes.ok) {
 		throw new Error(`Branch create failed: ${branchRes.status} ${await branchRes.text()}`);
 	  }
@@ -321,12 +311,12 @@ for (const info of (b as any).info || []) {
         brands={brands}
         loadingLists={loadingLists}
       />}
-		  {step === 3 && <ServiceRegistrationStep3 form={form} />}
+		 
 		  {/* ⬅️ ADDED: hidden submit so Enter works */}
 		  
 		  <div className="pt-6">
 
-				<button type="submit">Register Company & Branches</button>
+				<button type="submit" className="reg-company hidden">Register Company & Branches</button>
 
 			  </div>
 		</form>
