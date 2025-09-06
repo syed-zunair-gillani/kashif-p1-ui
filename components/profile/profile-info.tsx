@@ -22,7 +22,7 @@ const ProfileInfo = () => {
     <>
       {/* Section Title */}
       <section className="max-w-[1120px] mx-auto px-4 mb-8">
-        <h2 className="text-[#3F72AF] text-3xl md:text-5xl font-semibold">
+        <h2 className="text-[#3F72AF] text-2xl md:text-[32px] font-semibold">
           {"Profile info"}
         </h2>
         <p className="text-[#ADB5BD] text-xl md:text-[20px] mt-2">
