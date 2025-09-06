@@ -5,8 +5,7 @@ import * as React from "react";
 import {cn} from "@/lib/utils";
 import DistanceSelector from "@/components/services/services-search-results/distance-selector";
 import SortbySelector from "@/components/services/services-search-results/sortby-selector";
-import ServiceLogo from '@/assets/icons/services/ServiceLogo.svg'
-import YellowStar from '@/assets/icons/services/YellowStarIcon.svg'
+
 function SearchResultCard() {
 	const times = ["09:00 AM", "09:30 AM", "10:00 AM", "10:30 AM", "11:00 AM", "11:30 AM",
 		"12:00 PM", "12:30 PM", "13:00 PM", "13:30 PM", "14:00 PM", "14:30 PM"]
@@ -15,12 +14,11 @@ function SearchResultCard() {
 
 				{/*Service Basic info*/}
 				<div className={'basis-[35%] py-4 px-6 flex gap-4'}>
-					<div> sssssss</div>
-					<img src={ServiceLogo.src} className={'rounded-full size-14'}/>
+					<img src={`/assets/icons/services/ServiceLogo.svg`} className={'rounded-full size-14'}/>
 					<div className={'flex flex-col gap-0.5'}>
 						<h5 className={'text-charcoal text-base font-semibold'}>Performance Center</h5>
 						<div className={'flex items-center gap-1'}>
-							<img src={YellowStar.src}/>
+							<img src={`/assets/icons/services/YellowStarIcon.svg`} width={24}/>
 							<h6 className={'text-charcoal text-sm font-semibold'}>4.5</h6>
 						</div>
 						<p className={'text-charcoal/50 text-sm'}>4.5 km away</p>
