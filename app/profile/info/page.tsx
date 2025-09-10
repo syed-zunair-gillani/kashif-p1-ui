@@ -1,10 +1,22 @@
 "use client"
+import MyBranches from "@/components/booking/MyBranches";
+import MyPlans from "@/components/booking/MyPlans";
+import MyServices from "@/components/booking/MyServices";
+import WorkSchedule from "@/components/booking/WorkSchedule";
 // pages/ProfileInfoPage.tsx
 import NavTabs from "@/components/nav-tabs";
+import AccountDetails from "@/components/profile/account-details";
+import SecurityDetails from "@/components/profile/security-details";
 import React, { useState } from "react";
 
+type TabStatus = "Work schedule" | "My services" | "Account details" | "Security details" | "My Branches" | "My plans";
 
 const ProfileInfoPage = () => {
+    const [activeModule, setActiveModule] = useState<
+        "Work schedule" | "My services" | "Account details" | "Security details" | "My Branches" | "My plans"
+    >("Work schedule");
+    const [activeTab, setActiveTab] = useState<TabStatus>("Work schedule");
+
     return (
         <div className="bg-[#F8F9FA] min-h-screen">
             <main className="max-w-[1120px] mx-auto px-4 py-8">
@@ -22,7 +34,54 @@ const ProfileInfoPage = () => {
             </section>
 
 
+            {/* Tabs */}
+            <section className="border-b border-gray-200 mb-8">
+                <div className="flex gap-3 sm:gap-12 max-w-[1120px] mx-auto px-4">
+                    {(["Work schedule", "My services", "Account details", "Security details", "My Branches", "My plans"]).map(
+                        (tab:any) => {
+                            const isActive = activeTab === tab;
+                            return (
+                                <button
+                                    key={tab}
+                                    className={`px-0 py-4 font-medium text-sm flex gap-1 sm:gap-3 items-center ${isActive
+                                        ? `text-gray-700 border-b-2 border-gray-600`
+                                        : "text-gray-300 hover:text-gray-700"
+                                        }`}
+                                    onClick={() => setActiveTab(tab)}
+                                >
+                                    <img
+                                        src={
+                                            tab === "Work schedule"
+                                                ? "/icons/calendar-check.svg"
+                                                    : tab === "My services"
+                                                        ? "/icons/tool-02.svg"
+                                                        : tab === "Account details"
+                                                            ? "/icons/user-edit.svg"
+                                                            : tab === "Security details"
+                                                                ? "/icons/shield-zap.svg"
+                                                                : tab === "My Branches"
+                                                                    ? "/icons/building-02.svg"
+                                                                    : "/icons/file-plus-02.svg"
+                                        }
+                                        width={24}
+                                        alt={`${tab} icon`}
+                                    />
+                                    <p>{tab}</p>
+                                </button>
+                            );
+                        }
+                    )}
+                </div>
+            </section>
 
+            <section className="max-w-[1120px] mx-auto px-4">
+                {activeTab === "Work schedule" && <WorkSchedule />}
+                {activeTab === "My services" && <MyServices />}
+                {activeTab === "Account details" && <AccountDetails />}
+                {activeTab === "Security details" && <SecurityDetails />}
+                {activeTab === "My Branches" && <MyBranches />}
+                {activeTab === "My plans" && <MyPlans />}
+            </section>
 
         </div>
     );
@@ -59,35 +118,3 @@ const tabItems = [
         ),
     },
 ];
-
-const days = [
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Saturday",
-  "Sunday",
-];
-
-type Schedule = {
-  enabled: boolean;
-  from: string;
-  to: string;
-};
-
-const timeOptions = [
-  "09:00",
-  "10:00",
-  "11:00",
-  "12:00",
-  "13:00",
-  "14:00",
-  "15:00",
-  "16:00",
-  "17:00",
-  "18:00",
-];
-
-
-
