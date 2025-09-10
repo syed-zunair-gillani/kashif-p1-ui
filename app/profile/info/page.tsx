@@ -1,11 +1,12 @@
 "use client"
+import AccountDetails from "@/components/booking/AccountDetails";
 import MyBranches from "@/components/booking/MyBranches";
 import MyPlans from "@/components/booking/MyPlans";
 import MyServices from "@/components/booking/MyServices";
+// import SecurityDetails from "@/components/booking/SecurityDetails";
 import WorkSchedule from "@/components/booking/WorkSchedule";
 // pages/ProfileInfoPage.tsx
 import NavTabs from "@/components/nav-tabs";
-import AccountDetails from "@/components/profile/account-details";
 import SecurityDetails from "@/components/profile/security-details";
 import React, { useState } from "react";
 
@@ -36,7 +37,7 @@ const ProfileInfoPage = () => {
 
             {/* Tabs */}
             <section className="border-b border-gray-200 mb-8">
-                <div className="flex gap-3 sm:gap-12 max-w-[1120px] mx-auto px-4">
+                <div className="flex gap-3 lg:justify-between lg:gap-12 max-w-[1120px] mx-auto px-4 flex-wrap">
                     {(["Work schedule", "My services", "Account details", "Security details", "My Branches", "My plans"]).map(
                         (tab:any) => {
                             const isActive = activeTab === tab;
