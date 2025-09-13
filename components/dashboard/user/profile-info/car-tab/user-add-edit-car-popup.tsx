@@ -112,7 +112,7 @@ function UserAddEditCarPopup(
 										control={form.control}
 										name={'model'}
 										label={'Model'}
-										Children={(onChange, hasError, value) => <CarModelSelector triggerClassname={cn(grayTriggerClassname, hasError && '!border-vibrant-red')} value={value} onChange={onChange}/>}
+										Children={(onChange, hasError, value) => <CarModelSelector triggerClassname={cn(grayTriggerClassname, hasError && '!border-vibrant-red')} value={value} brandId={0} onChange={onChange}/>}
 								/>
 
 								<CustomFormField
