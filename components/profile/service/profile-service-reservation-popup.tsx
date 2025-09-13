@@ -176,6 +176,7 @@ export default function ProfileServiceReservationPopup(
 													<CarModelSelector
 															value={value}
 															onChange={onChange}
+															brandId={0}
 															triggerClassname={cn(grayTriggerClassname, hasError && '!border-vibrant-red')}
 													/>
 											)
