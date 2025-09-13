@@ -11,7 +11,7 @@ interface ICardHeader {
   branchName: string
   logoImg: string
 }
-export function CardHeader({ containerClassname, branchName, logoImg }: ICardHeader) {
+export function CardHeader({ containerClassname, branchName, logoImg }: any) {
   return (
     <div className={cn('p-4 pb-0 flex items-center gap-x-4', containerClassname)}>
       {/* Dynamic logo from API */}
